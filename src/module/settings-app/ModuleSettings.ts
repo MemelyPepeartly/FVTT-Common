@@ -19,16 +19,14 @@ import SettingsApp from './SettingsApp';
 
 // TODO: Localization of strings in this file.
 
-const Features = {};
-
 const MENU_KEY = 'SETTINGS_MENU';
 
-type IFeatureInputType = 'checkbox' | 'number' | 'text' | 'file';
-interface IFeatureAttribute {
+export type IFeatureInputType = 'checkbox' | 'number' | 'text' | 'file';
+export interface IFeatureAttribute {
     icon: string;
     title: string;
 }
-interface IFeatureInput {
+export interface IFeatureInput {
     name: string;
     label: string;
     type: IFeatureInputType;
@@ -37,14 +35,14 @@ interface IFeatureInput {
     max?: number;
     min?: number;
 }
-interface IFeatureRegistration {
+export interface IFeatureRegistration {
     name: string;
     type: BooleanConstructor | NumberConstructor | StringConstructor;
     default: any;
     onChange?: (value: any) => void;
 }
-type HookCallback = () => void;
-interface IFeatureDefinition {
+export type HookCallback = () => void;
+export interface IFeatureDefinition {
     id: string;
     title: string;
     attributes?: IFeatureAttribute[];
@@ -67,74 +65,29 @@ export const ATTR_REOPEN_SHEET_REQUIRED: IFeatureAttribute = {
     title: 'Sheets must be closed and re-opened.',
 };
 
-export const FEATURE_ALLOW_MERGING = 'allow-merging';
-
-export const FEATURE_QUICK_ROLL_MODIFIERS = 'quick-roll-modifiers-enabled';
-export const FEATURE_QUICK_ROLL_CONTROL = 'quick-roll-control-count';
-export const FEATURE_QUICK_ROLL_SHIFT = 'quick-roll-shift-count';
-
-export const FEATURES: IFeatureDefinition[] = [
-    {
-        id: FEATURE_ALLOW_MERGING,
-        title: 'Merge When Generating',
-        attributes: [],
-        // TODO: Localization
-        description:
-            'If this setting is enabled, PF2E Lootgen will attempt to merge generated items into' +
-            ' existing stacks on the actor. If this setting is disabled, new stacks will still merge but not' +
-            ' merge with existing items.',
-        inputs: [],
-        register: [],
-        help:
-            'PF2E Lootgen will not check for modifications on existing items, so if you expect to change' +
-            ' them this may result in improper treasure values, item descriptions, etc. for generated items.',
-    },
-    {
-        id: FEATURE_QUICK_ROLL_MODIFIERS,
-        title: 'Quick Roll Key Modifiers',
-        attributes: [],
-        description: 'When a key is held when using the quick roll buttons on the loot generator, these settings determine how many items should be rolled.',
-        inputs: [
-            {
-                name: FEATURE_QUICK_ROLL_CONTROL,
-                label: 'Control',
-                type: 'number',
-                value: 10,
-                min: 1,
-            },
-            {
-                name: FEATURE_QUICK_ROLL_SHIFT,
-                label: 'Shift',
-                type: 'number',
-                value: 5,
-                min: 1,
-            },
-        ],
-        register: [
-            {
-                name: FEATURE_QUICK_ROLL_CONTROL,
-                type: Number,
-                default: 10,
-            },
-            {
-                name: FEATURE_QUICK_ROLL_SHIFT,
-                type: Number,
-                default: 5,
-            },
-        ],
-        help: 'Holding down multiple keys will multiply together the modifiers.',
-    },
-];
-
+// TODO: This can be a generic class so we have correctly typed features.
 export default class ModuleSettings {
-    public static readonly FEATURES = Features;
+    protected static _instance: ModuleSettings;
+    public static get instance() {
+        if (this._instance === undefined) {
+            this._instance = new ModuleSettings();
+        }
+        return this._instance;
+    }
+
+    protected _moduleName: string;
+    protected _features: IFeatureDefinition[];
+
+    public get features(): IFeatureDefinition[] {
+        return duplicate(this._features) as IFeatureDefinition[];
+    }
 
     /**
      * Retrieve a setting from the store.
      * @param key They key the setting resides at.
      */
-    public static get<T = any>(key: string): T {
-        return game.settings.get(MODULE_NAME, key) as T;
+    public get<T = any>(key: string): T {
+        return game.settings.get(this._moduleName, key) as T;
     }
 
     /**
@@ -142,8 +95,8 @@ export default class ModuleSettings {
      * @param key The key the setting resides at.
      * @param value The value the setting should be set to.
      */
-    public static async set(key: string, value: any) {
-        return game.settings.set(MODULE_NAME, key, value);
+    public async set(key: string, value: any) {
+        return game.settings.set(this._moduleName, key, value);
     }
 
     /**
@@ -151,16 +104,16 @@ export default class ModuleSettings {
      * @param key The key the setting should reside at.
      * @param value The default value of the setting.
      */
-    public static reg(key: string, value: any) {
-        game.settings.register(MODULE_NAME, key, value);
+    public reg(key: string, value: any) {
+        game.settings.register(this._moduleName, key, value);
     }
 
     /**
      * Binds on init hooks for each feature that has them.
      */
-    public static onInit() {
-        for (const feature of FEATURES) {
-            if (feature.onInit && ModuleSettings.get(feature.id)) {
+    public onInit() {
+        for (const feature of this._features) {
+            if (feature.onInit && this.get(feature.id)) {
                 feature.onInit();
             }
         }
@@ -169,9 +122,9 @@ export default class ModuleSettings {
     /**
      * Binds on setup hooks for each feature that has them.
      */
-    public static onSetup() {
-        for (const feature of FEATURES) {
-            if (feature.onSetup && ModuleSettings.get(feature.id)) {
+    public onSetup() {
+        for (const feature of this._features) {
+            if (feature.onSetup && this.get(feature.id)) {
                 feature.onSetup();
             }
         }
@@ -180,9 +133,9 @@ export default class ModuleSettings {
     /**
      * Binds on ready hooks for each feature that has them.
      */
-    public static onReady() {
-        for (const feature of FEATURES) {
-            if (feature.onReady && ModuleSettings.get(feature.id)) {
+    public onReady() {
+        for (const feature of this._features) {
+            if (feature.onReady && this.get(feature.id)) {
                 feature.onReady();
             }
         }
@@ -191,8 +144,11 @@ export default class ModuleSettings {
     /**
      * Registers all game settings for the application.
      */
-    public static registerAllSettings() {
-        for (const feature of FEATURES) {
+    public registerAllSettings(moduleName: string, features: IFeatureDefinition[]) {
+        this._moduleName = moduleName;
+        this._features = features;
+
+        for (const feature of features) {
             // Register the feature toggle
             const enabled = {
                 name: feature.id,
@@ -202,7 +158,7 @@ export default class ModuleSettings {
                 config: false,
                 restricted: true,
             };
-            ModuleSettings.reg(feature.id, enabled);
+            this.reg(feature.id, enabled);
 
             // Register any other settings values for a feature.
             for (const registration of feature.register) {
@@ -215,7 +171,7 @@ export default class ModuleSettings {
                     restricted: true,
                     onChange: registration.onChange,
                 };
-                ModuleSettings.reg(registration.name, setting);
+                this.reg(registration.name, setting);
             }
         }
 

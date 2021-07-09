@@ -15,7 +15,7 @@
  */
 
 import { MODULE_NAME } from '../../../../src/module/Constants';
-import ModuleSettings, { ATTR_RELOAD_REQUIRED, FEATURES } from './ModuleSettings';
+import ModuleSettings, { ATTR_RELOAD_REQUIRED } from './ModuleSettings';
 
 export default class SettingsApp extends FormApplication {
     static get defaultOptions() {
@@ -46,7 +46,7 @@ export default class SettingsApp extends FormApplication {
     getData(options?: object) {
         const renderData = super.getData(options);
 
-        let features = duplicate(FEATURES);
+        let features = ModuleSettings.instance.features;
         for (const setting of features) {
             setting.inputs.unshift({
                 name: setting.id,
@@ -56,7 +56,7 @@ export default class SettingsApp extends FormApplication {
             });
 
             for (const input of setting.inputs) {
-                input['value'] = ModuleSettings.get(input.name);
+                input['value'] = ModuleSettings.instance.get(input.name);
             }
         }
         renderData['features'] = features;
@@ -66,12 +66,13 @@ export default class SettingsApp extends FormApplication {
 
     protected async _updateObject(event: Event, formData: any): Promise<void> {
         let shouldReload = false;
+        const features = ModuleSettings.instance.features;
         for (const [key, newValue] of Object.entries(formData)) {
-            const oldValue = ModuleSettings.get(key);
-            await ModuleSettings.set(key, newValue);
+            const oldValue = ModuleSettings.instance.get(key);
+            await ModuleSettings.instance.set(key, newValue);
 
             if (oldValue !== newValue) {
-                const reloadRequired = FEATURES.find((feature) => feature.id === key)?.attributes?.includes(ATTR_RELOAD_REQUIRED) ?? false;
+                const reloadRequired = features.find((feature) => feature.id === key)?.attributes?.includes(ATTR_RELOAD_REQUIRED) ?? false;
                 shouldReload = shouldReload || reloadRequired;
             }
         }
