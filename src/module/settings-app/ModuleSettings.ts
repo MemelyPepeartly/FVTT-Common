@@ -76,6 +76,11 @@ export default class ModuleSettings {
     }
 
     protected _moduleName: string;
+
+    public get moduleName(): string {
+        return this._moduleName;
+    }
+
     protected _features: IFeatureDefinition[];
 
     public get features(): IFeatureDefinition[] {
