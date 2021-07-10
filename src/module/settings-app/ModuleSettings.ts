@@ -176,9 +176,9 @@ export default class ModuleSettings {
         }
 
         game.settings.registerMenu(MODULE_NAME, MENU_KEY, {
-            name: 'PF2E Loot Generator Settings',
-            label: 'PF2E Loot Generator Settings',
-            hint: 'Configure PF2E Loot Generator enabled features and other options.',
+            name: 'Settings',
+            label: 'Settings',
+            hint: 'Configure enabled features and other options, view the license, and see the about section to learn more about my modules.',
             icon: 'fas fa-cogs',
             type: SettingsApp,
             restricted: true,
