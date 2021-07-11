@@ -92,7 +92,7 @@ export default class ModuleSettings {
      * @param key They key the setting resides at.
      */
     public get<T = any>(key: string): T {
-        return game.settings.get(this._moduleName, key) as T;
+        return (game as Game).settings.get(this._moduleName, key) as T;
     }
 
     /**
@@ -101,7 +101,7 @@ export default class ModuleSettings {
      * @param value The value the setting should be set to.
      */
     public async set(key: string, value: any) {
-        return game.settings.set(this._moduleName, key, value);
+        return (game as Game).settings.set(this._moduleName, key, value);
     }
 
     /**
@@ -110,7 +110,7 @@ export default class ModuleSettings {
      * @param value The default value of the setting.
      */
     public reg(key: string, value: any) {
-        game.settings.register(this._moduleName, key, value);
+        (game as Game).settings.register(this._moduleName, key, value);
     }
 
     /**
@@ -180,7 +180,7 @@ export default class ModuleSettings {
             }
         }
 
-        game.settings.registerMenu(MODULE_NAME, MENU_KEY, {
+        (game as Game).settings.registerMenu(MODULE_NAME, MENU_KEY, {
             name: 'Settings',
             label: 'Settings',
             hint: 'Configure enabled features and other options, view the license, and see the about section to learn more about my modules.',
