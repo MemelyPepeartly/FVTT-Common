@@ -20,10 +20,10 @@ import ModuleSettings, { ATTR_RELOAD_REQUIRED } from './ModuleSettings';
 export default class SettingsApp extends FormApplication {
     static get defaultOptions() {
         const options = super.defaultOptions;
-        options.title = 'PF2E Loot Generator Settings';
+        options.title = 'PF2E Toolbox Settings';
         options.template = `modules/${MODULE_NAME}/templates/settings-app/SettingsApp.html`;
         options.classes = options.classes ?? [];
-        options.classes = [...options.classes, 'pf2e-lootgen', 'settings-app'];
+        options.classes = [...options.classes, 'pf2e-toolbox', 'settings-app'];
         options.tabs = [
             {
                 navSelector: `.settings-app-nav`,
