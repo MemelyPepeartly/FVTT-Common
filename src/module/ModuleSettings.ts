@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { MODULE_NAME } from '../../../../src/module/Constants';
-import SettingsApp from './SettingsApp';
+import { MODULE_NAME } from '../../../src/module/Constants';
+import SettingsApp from './settings-app/SettingsApp';
 
 // TODO: Localization of strings in this file.
 
@@ -65,25 +65,43 @@ export const ATTR_REOPEN_SHEET_REQUIRED: IFeatureAttribute = {
     title: 'Sheets must be closed and re-opened.',
 };
 
+export interface ModuleSettingsArgs {
+    moduleName: string;
+    moduleTitle: string;
+    features: IFeatureDefinition[];
+}
+
 // TODO: This can be a generic class so we have correctly typed features.
 export default class ModuleSettings {
     protected static _instance: ModuleSettings;
     public static get instance() {
-        if (this._instance === undefined) {
-            this._instance = new ModuleSettings();
-        }
         return this._instance;
     }
 
-    protected _moduleName: string;
+    public static initialize(options: ModuleSettingsArgs) {
+        this._instance = new ModuleSettings(options);
+        this._instance.registerAllSettings();
+    }
 
-    public get moduleName(): string {
+    protected constructor(options: ModuleSettingsArgs) {
+        this._moduleName = options.moduleName;
+        this._moduleTitle = options.moduleTitle;
+        this._features = options.features;
+    }
+
+    protected _moduleName: string;
+    protected _moduleTitle: string;
+    protected _features: IFeatureDefinition[];
+
+    public get moduleName() {
         return this._moduleName;
     }
 
-    protected _features: IFeatureDefinition[];
+    public get moduleTitle() {
+        return this._moduleTitle;
+    }
 
-    public get features(): IFeatureDefinition[] {
+    public get features() {
         return duplicate(this._features) as IFeatureDefinition[];
     }
 
@@ -149,11 +167,8 @@ export default class ModuleSettings {
     /**
      * Registers all game settings for the application.
      */
-    public registerAllSettings(moduleName: string, features: IFeatureDefinition[]) {
-        this._moduleName = moduleName;
-        this._features = features;
-
-        for (const feature of features) {
+    protected registerAllSettings() {
+        for (const feature of this._features) {
             // Register the feature toggle
             const enabled = {
                 name: feature.id,

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import ModuleSettings from '../settings-app/ModuleSettings';
+import ModuleSettings from '../ModuleSettings';
 
 /**
  * Chat command processor

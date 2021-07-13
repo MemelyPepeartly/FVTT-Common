@@ -15,9 +15,9 @@
  */
 
 import { MODULE_NAME } from '../../../../src/module/Constants';
-import ModuleSettings, { ATTR_RELOAD_REQUIRED } from './ModuleSettings';
+import ModuleSettings, { ATTR_RELOAD_REQUIRED } from '../ModuleSettings';
 
-export default class SettingsApp extends FormApplication {
+export default class SettingsApp extends FormApplication<FormApplication.Options, any, any> {
     static get defaultOptions() {
         const options = super.defaultOptions;
         options.title = `${ModuleSettings.instance.moduleName} Settings`;
@@ -44,7 +44,7 @@ export default class SettingsApp extends FormApplication {
     }
 
     getData(options?: object) {
-        const renderData = super.getData(options);
+        const renderData: Record<string, any> = super.getData(options);
 
         let features = ModuleSettings.instance.features;
         for (const setting of features) {
