@@ -20,8 +20,8 @@ import ModuleSettings, { ATTR_RELOAD_REQUIRED } from '../ModuleSettings';
 export default class SettingsApp extends FormApplication<FormApplication.Options, any, any> {
     static get defaultOptions() {
         const options = super.defaultOptions;
-        options.title = `${ModuleSettings.instance.moduleName} Settings`;
-        options.template = `modules/${MODULE_NAME}/templates/settings-app/SettingsApp.html`;
+        options.title = game.i18n.localize(ModuleSettings.instance.moduleTitle);
+        options.template = `modules/${ModuleSettings.instance.moduleName}/templates/settings-app/SettingsApp.html`;
         options.classes = options.classes ?? [];
         options.classes = [...options.classes, 'dj-settings-app', 'settings-app'];
         options.tabs = [
@@ -45,6 +45,12 @@ export default class SettingsApp extends FormApplication<FormApplication.Options
 
     getData(options?: object) {
         const renderData: Record<string, any> = super.getData(options);
+
+        renderData['tabs'] = [
+            `modules/${ModuleSettings.instance.moduleName}/templates/settings-app/tabs/About.html`,
+            `modules/${ModuleSettings.instance.moduleName}/templates/settings-app/tabs/Features.html`,
+            `modules/${ModuleSettings.instance.moduleName}/templates/settings-app/tabs/License.html`,
+        ];
 
         let features = ModuleSettings.instance.features;
         for (const setting of features) {
