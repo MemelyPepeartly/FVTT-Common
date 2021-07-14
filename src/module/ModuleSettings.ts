@@ -16,6 +16,7 @@
 
 import { MODULE_NAME } from '../../../src/module/Constants';
 import SettingsApp from './settings-app/SettingsApp';
+import { registerHelpers } from './Handlebars';
 
 // TODO: Localization of strings in this file.
 
@@ -81,6 +82,12 @@ export default class ModuleSettings {
     public static initialize(options: ModuleSettingsArgs) {
         this._instance = new ModuleSettings(options);
         this._instance.registerAllSettings();
+
+        registerHelpers();
+
+        Hooks.on('init', () => ModuleSettings.instance.onInit());
+        Hooks.on('setup', () => ModuleSettings.instance.onSetup());
+        Hooks.on('ready', () => ModuleSettings.instance.onReady());
     }
 
     protected constructor(options: ModuleSettingsArgs) {
