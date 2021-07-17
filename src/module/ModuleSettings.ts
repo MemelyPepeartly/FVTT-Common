@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { MODULE_NAME } from '../../../src/module/Constants';
 import SettingsApp from './settings-app/SettingsApp';
 import { registerHelpers } from './Handlebars';
 
@@ -202,7 +201,7 @@ export default class ModuleSettings {
             }
         }
 
-        (game as Game).settings.registerMenu(MODULE_NAME, MENU_KEY, {
+        (game as Game).settings.registerMenu(this._moduleName, MENU_KEY, {
             name: 'Settings',
             label: 'Settings',
             hint: 'Configure enabled features and other options, view the license, and see the about section to learn more about my modules.',
