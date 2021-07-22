@@ -14,7 +14,21 @@
  * limitations under the License.
  */
 
-import { HandlebarsContext } from '../../../src/module/Handlebars';
+export interface HandlebarsContext {
+    data: Record<string, any> & {
+        root: Record<string, any>;
+    };
+    hash?: Record<string, any>;
+    // contents of block
+    fn?: (context: any) => string;
+    // contents of else block
+    inverse?: () => string;
+    loc?: {
+        start: { line: number; column: number };
+        end: { line: number; column: number };
+    };
+    name?: string;
+}
 
 export function registerHelpers() {
     // absolute equality check
