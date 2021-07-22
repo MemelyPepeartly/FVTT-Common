@@ -19,6 +19,7 @@ declare global {
         game: never;
         canvas: never;
         ui: never;
+        i18n: never;
     }
 }
 export {};
