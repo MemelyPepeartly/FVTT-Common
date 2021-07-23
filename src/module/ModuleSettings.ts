@@ -16,6 +16,7 @@
 
 import SettingsApp from './settings-app/SettingsApp';
 import { registerHelpers } from './Handlebars';
+import { registerHandlebarsTemplates } from '../../../src/module/Handlebars';
 
 // TODO: Localization of strings in this file.
 
@@ -200,6 +201,14 @@ export default class ModuleSettings {
                 this.reg(registration.name, setting);
             }
         }
+
+        const templatePaths = [
+            `templates/settings-app/SettingsApp.html`,
+            `templates/settings-app/tabs/About.html`,
+            `templates/settings-app/tabs/Features.html`,
+            `templates/settings-app/tabs/License.html`,
+        ].map((path: string) => `modules/${this._moduleName}/${path}`);
+        loadTemplates(templatePaths);
 
         (game as Game).settings.registerMenu(this._moduleName, MENU_KEY, {
             name: 'Settings',
