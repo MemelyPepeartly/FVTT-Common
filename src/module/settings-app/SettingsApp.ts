@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { MODULE_NAME } from '../../../../src/module/Constants';
 import ModuleSettings, { ATTR_RELOAD_REQUIRED } from '../ModuleSettings';
 
 export default class SettingsApp extends FormApplication<FormApplication.Options, any, any> {
