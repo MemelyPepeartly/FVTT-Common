@@ -16,6 +16,7 @@
 
 import SettingsApp from './settings-app/SettingsApp';
 import { registerHelpers } from './Handlebars';
+import { registerHandlebarsTemplates } from '../../../src/module/Handlebars';
 
 // TODO: Localization of strings in this file.
 
